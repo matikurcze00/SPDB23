@@ -19,7 +19,7 @@ stop_weight = 'travel_time'
 stop_value = 1.1
 weight_extend = 'travel_time'
 max_extend = 1
-poi_type = " 'fast_food'" #'atm', 'bar',, 'food', 'fuel', 'restaurant'
+poi_type = ('atm','fast_food') #'fast_food' 'atm', 'bar',, 'food', 'fuel', 'restaurant'
 # Create an SQLAlchemy engine and connect to the database
 engine = create_engine(db_uri)
 

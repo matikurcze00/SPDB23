@@ -21,6 +21,6 @@ poi_query = """WITH bbox AS (
     SELECT osm_id, name,  amenity, ST_Distance(way, ST_SetSRID(st_makepoint(%s, %s),3857)), way 
     FROM public.planet_osm_point x CROSS JOIN bbox
     WHERE
-        amenity IN ( %s) AND ST_Within(way, bbox.search_area)
+        amenity IN %s AND ST_Within(way, bbox.search_area)
     order by ST_Distance(way, ST_SetSRID(st_makepoint(%s, %s),3857))
     limit 5;"""
