@@ -39,18 +39,26 @@ def nearest_node(lon, lat, graph):
         distance_dict[node] = distance
     return min(distance_dict, key=distance_dict.get)
 
-def find_stop_node(shortest_path, stop_weight, stop_value, graph ):
+def find_stop_node(shortest_path, stop_weight, stop_value, graph, is_reversed ):
     temp_travel_length = 0.0
+    if is_reversed:
+        total_path_length = path_length(shortest_path, graph, stop_weight)
+        stop_value = total_path_length - stop_value * 1.1
+
+    else:
+        stop_value = stop_value * 0.9
+
     for i in range (len(shortest_path) -1):
-        node1 = shortest_path[i]
-        node2 = shortest_path[i + 1]
+            node1 = shortest_path[i]
+            node2 = shortest_path[i + 1]
 
-        # Get the travel time for the edge between node1 and node2
-        edge_data = graph.get_edge_data(node1, node2)
-        temp_travel_length += edge_data[stop_weight]
+            # Get the travel time for the edge between node1 and node2
+            edge_data = graph.get_edge_data(node1, node2)
+            temp_travel_length += edge_data[stop_weight]
 
-        if temp_travel_length > stop_value * 0.9 :
-            return i
+            if temp_travel_length > stop_value :
+                return i   
+            
 def path_length(shortest_path, graph, weight):
     total_length = 0
     for i in range(len(shortest_path) - 1):

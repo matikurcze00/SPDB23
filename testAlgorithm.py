@@ -19,6 +19,7 @@ stop_weight = 'travel_time'
 stop_value = 1.1
 weight_extend = 'travel_time'
 max_extend = 1
+is_reversed = False
 poi_type = ('atm','fast_food') #'fast_food' 'atm', 'bar',, 'food', 'fuel', 'restaurant'
 # Create an SQLAlchemy engine and connect to the database
 engine = create_engine(db_uri)
@@ -46,7 +47,7 @@ print('Old path')
 print(f'Total time {path_length(shortest_path, graph, "travel_time")}')
 print(f'Total Length {path_length(shortest_path, graph, "length")}')
 
-stop_node_id = find_stop_node(shortest_path, stop_weight, stop_value, graph)
+stop_node_id = find_stop_node(shortest_path, stop_weight, stop_value, graph, is_reversed)
 
 
 
