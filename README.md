@@ -8,5 +8,5 @@
 
 ## Run program
 ```bash
-    python3 main.py
+    python3 poi_pathfinder.py
 ```
