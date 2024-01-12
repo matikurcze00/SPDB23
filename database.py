@@ -16,11 +16,11 @@ graph_query = """
     """
 
 poi_query = """WITH bbox AS (
-        SELECT ST_Expand(ST_SetSRID(ST_MakePoint(%s, %s), 3857), 100000) AS search_area
+        SELECT ST_Expand(ST_SetSRID(ST_MakePoint(%s, %s), 3857), 10000) AS search_area
     )
     SELECT osm_id, name,  amenity, ST_Distance(way, ST_SetSRID(st_makepoint(%s, %s),3857)), way 
     FROM public.planet_osm_point x CROSS JOIN bbox
     WHERE
         amenity IN %s AND ST_Within(way, bbox.search_area)
     order by ST_Distance(way, ST_SetSRID(st_makepoint(%s, %s),3857))
-    limit 5;"""
+    limit 10;"""

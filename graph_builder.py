@@ -1,7 +1,8 @@
+import time
 import geopandas as gpd
 import networkx as nx
 import pandas as pd
-from shapely.geometry import Point
+from shapely.geometry import Point, LineString
 from database import graph_query,poi_query
 
 
@@ -18,18 +19,19 @@ def build_graph(start_3857, end_3857, buffer_distance, engine):
     
     #AND highway NOT IN ('track', 'service', 'cycleway', 'pedestrian', 'footway', 'steps', 'living_street', 'path', 'construction', 'proposed', 'rest_area', 'raceway', 'planned', 'platform', 'services')
     gdf = gpd.read_postgis(graph_query, engine, geom_col='way', params=(bbox[0], bbox[1], bbox[2], bbox[3]))
-
+    gdf = gdf.to_crs(epsg=3857)
     # Create a graph representation of the road network
     G = nx.Graph()
     for idx, row in gdf.iterrows():
         geom = row['way']
-        maxspeed = row['maxspeed']
+        maxspeed = row['maxspeed'] if not pd.isna(row['maxspeed']) and row['maxspeed'] > 19 else 90
         length = geom.length / 1000
-        travel_time = length / (maxspeed if not pd.isna(maxspeed) and maxspeed > 19 else 50)
+        travel_time = length / maxspeed
         G.add_edge(geom.coords[0], geom.coords[-1], travel_time=travel_time, maxspeed=maxspeed, length=length)
 
     return G
-
+def segments(curve):
+    return list(map(LineString, zip(curve.coords[:-1], curve.coords[1:])))
     # Helper function to find the nearest node in the graph
 def nearest_node(lon, lat, graph):
     distance_dict = {}
@@ -74,6 +76,7 @@ def find_new_path_with_poi(shortest_path, stop_node_id, engine, graph, start_nod
     primary_length = path_length(shortest_path, graph, weight_extend)
     while(stop_node_id>0):
         path_break = Point(shortest_path[stop_node_id])
+        
         gdf = gpd.read_postgis(poi_query, engine, geom_col='way', params=(path_break.x, path_break.y, path_break.x, path_break.y,poi_type, path_break.x, path_break.y))
 
         # Create a graph representation of the road network
