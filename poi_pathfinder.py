@@ -2,6 +2,14 @@ import tkinter as tk
 from tkinter import ttk
 import tkintermapview
 
+from gui.multi_select_dropdown import MultiSelectDropdown
+
+def read_poi_types_form_file(file_path):
+    with open(file_path, "r") as file:
+        return [line.strip() for line in file.readlines()]
+    
+def receive_selected_options(selected_options):
+    print("Selected options:", selected_options)
 
 root = tk.Tk()
 root.title("POI Pathfinder")
@@ -18,91 +26,89 @@ control_frame = tk.Frame(root, width = 400, height = 600)
 control_frame.pack(side = "right", fill = "both", expand = True)
 control_frame.pack_propagate(False)
 
-label = tk.Label(root, text = "Starting location")
-label.pack(pady = 2)
-edit_field1 = tk.Entry(control_frame)
-edit_field1.pack(pady = 2)
+start_loc_label = tk.Label(root, text = "Starting location")
+start_loc_label.pack(pady = 2)
+start_loc_edit = tk.Entry(control_frame)
+start_loc_edit.pack(pady = 2)
 
-label = tk.Label(root, text = "End location")
-label.pack(pady = 2)
-edit_field2 = tk.Entry(control_frame)
-edit_field2.pack(pady = 2)
+end_loc_label = tk.Label(root, text = "End location")
+end_loc_label.pack(pady = 2)
+end_loc_edit = tk.Entry(control_frame)
+end_loc_edit.pack(pady = 2)
 
-label = tk.Label(root, text = "Max. time extension [h]")
-label.pack(pady = 2)
-edit_field3 = tk.Entry(control_frame)
-edit_field3.pack(pady = 2)
+max_time_label = tk.Label(root, text = "Max. time extension [h]")
+max_time_label.pack(pady = 2)
+max_time_edit = tk.Entry(control_frame)
+max_time_edit.pack(pady = 2)
 
-label = tk.Label(root, text = "Max. path extension [km]")
-label.pack(pady = 2)
-edit_field4 = tk.Entry(control_frame)
-edit_field4.pack(pady = 2)
+max_path_label = tk.Label(root, text = "Max. path extension [km]")
+max_path_label.pack(pady = 2)
+max_path_edit = tk.Entry(control_frame)
+max_path_edit.pack(pady = 2)
 
-label = tk.Label(control_frame, text = "POI requirements")
-label.pack(pady = (10, 0))
-gray_box = tk.Frame(control_frame, bg = "gray", pady = 10)
-gray_box.pack(fill = "x", padx = 10, pady = 10)
+poi_requirements_label = tk.Label(control_frame, text = "POI requirements")
+poi_requirements_label.pack(pady = (10, 0))
+poi_requirements_box = tk.Frame(control_frame, bg = "gray", pady = 10)
+poi_requirements_box.pack(fill = "x", padx = 10, pady = 10)
 
 var = tk.BooleanVar(value = True)
 
 def toggle_state():
     state = "normal" if var.get() else "disabled"
     opposite_state = "disabled" if var.get() else "normal"
-    edit_field5.config(state = state)
-    edit_field6.config(state = state)
-    edit_field7.config(state = opposite_state)
-    edit_field8.config(state = opposite_state)
+    road_from_begin_edit.config(state = state)
+    road_from_end_edit.config(state = state)
+    time_from_begin_edit.config(state = opposite_state)
+    time_from_end_edit.config(state = opposite_state)
 
-radio_button1 = tk.Radiobutton(
-    gray_box,
+road_radio_button = tk.Radiobutton(
+    poi_requirements_box,
     text = "Road",
     variable = var,
     value = True,
     command = toggle_state,
     bg = "gray"
 )
-radio_button1.pack()
+road_radio_button.pack()
 
-label = tk.Label(gray_box, text = "From beginning", bg = "gray")
-label.pack(pady = 2)
-edit_field5 = tk.Entry(gray_box)
-edit_field5.pack(pady = 2)
-edit_field5.config(state = "normal")
+road_from_begin_label = tk.Label(poi_requirements_box, text = "From beginning", bg = "gray")
+road_from_begin_label.pack(pady = 2)
+road_from_begin_edit = tk.Entry(poi_requirements_box)
+road_from_begin_edit.pack(pady = 2)
+road_from_begin_edit.config(state = "normal")
 
-label = tk.Label(gray_box, text = "From end", bg = "gray")
-label.pack(pady = 2)
-edit_field6 = tk.Entry(gray_box)
-edit_field6.pack(pady = 2)
-edit_field6.config(state = "normal")
+road_from_end_label = tk.Label(poi_requirements_box, text = "From end", bg = "gray")
+road_from_end_label.pack(pady = 2)
+road_from_end_edit = tk.Entry(poi_requirements_box)
+road_from_end_edit.pack(pady = 2)
+road_from_end_edit.config(state = "normal")
 
-radio_button2 = tk.Radiobutton(
-    gray_box,
+time_radio_button = tk.Radiobutton(
+    poi_requirements_box,
     text = "Time",
     variable = var,
     value = False,
     command = toggle_state,
     bg = "gray"
 )
-radio_button2.pack()
+time_radio_button.pack()
 
-label = tk.Label(gray_box, text = "From beginning", bg = "gray")
-label.pack(pady = 2)
-edit_field7 = tk.Entry(gray_box)
-edit_field7.pack(pady = 2)
-edit_field7.config(state = "disabled")
+time_from_begin_label = tk.Label(poi_requirements_box, text = "From beginning", bg = "gray")
+time_from_begin_label.pack(pady = 2)
+time_from_begin_edit = tk.Entry(poi_requirements_box)
+time_from_begin_edit.pack(pady = 2)
+time_from_begin_edit.config(state = "disabled")
 
-label = tk.Label(gray_box, text = "From end", bg = "gray")
-label.pack(pady = 2)
-edit_field8 = tk.Entry(gray_box)
-edit_field8.pack(pady = 2)
-edit_field8.config(state = "disabled")
+time_from_end_label = tk.Label(poi_requirements_box, text = "From end", bg = "gray")
+time_from_end_label.pack(pady = 2)
+time_from_end_edit = tk.Entry(poi_requirements_box)
+time_from_end_edit.pack(pady = 2)
+time_from_end_edit.config(state = "disabled")
 
-label = tk.Label(gray_box, text = "POI type", bg = "gray")
-label.pack(pady = 2)
-dropdown_options = ["Fast food", "Option 2", "Option 3"]
-dropdown_var = tk.StringVar()
-dropdown = ttk.OptionMenu(gray_box, dropdown_var, dropdown_options[0], *dropdown_options)
-dropdown.pack()
+poi_type_label = tk.Label(poi_requirements_box, text = "POI type", bg = "gray")
+poi_type_label.pack(pady = 2)
+poi_types = read_poi_types_form_file("poi_types.txt")
+multi_select_dd = MultiSelectDropdown(poi_requirements_box, poi_types, on_selection_done = receive_selected_options)
 
 button_frame = tk.Frame(control_frame)
 button_frame.pack(side = "bottom", fill = "x", pady = 10)
