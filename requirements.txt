@@ -7,3 +7,6 @@ geopandas==0.14.1
 tk==0.1.0
 tkintermapview==1.29
 pyperclip==1.8.2
+matplotlib==3.8.2
+folium==0.15.1
+geopy==2.4.1

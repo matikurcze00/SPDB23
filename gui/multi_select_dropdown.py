@@ -27,7 +27,7 @@ class MultiSelectDropdown:
         self.check_vars = {}
 
         self.display_button = tk.Button(parent, text = "Select POI types", command = self.show_options)
-        self.display_button.pack()
+        self.display_button.pack(pady = 15)
 
         self.selection_window = None
         self.on_selection_done = on_selection_done
