@@ -93,7 +93,7 @@ def find_new_path_with_poi(shortest_path, stop_node_id, engine, graph, start_nod
                 new_length = path_length(shortest_path_with_poi, graph, weight_extend)
                 print(f"extend: {new_length - primary_length}")
                 if new_length - primary_length < max_extend:
-                    return shortest_path_with_poi
+                    return shortest_path_with_poi, poi_point
                 else :
                     continue
             except nx.NetworkXNoPath:
@@ -101,4 +101,4 @@ def find_new_path_with_poi(shortest_path, stop_node_id, engine, graph, start_nod
                 continue
         stop_node_id = stop_node_id - 1
 
-    return shortest_path_with_poi
+    return shortest_path_with_poi, poi_point
