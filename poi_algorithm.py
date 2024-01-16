@@ -26,14 +26,14 @@ def run_poi_pathfinder_algorithm(parameters):
     poi_from_val = parameters["poi_from_val"]
 
     # Set algorithm's parameters
-    weight = "length"
+    weight = "length" # 
     weight_extend = "travel_time" if max_ext_type == "time" else "length"
     max_extend = max_time_ext if weight_extend == "travel_time" else max_road_ext
     stop_weight = "travel_time" if poi_requirements_type == "time" else "length"
     stop_value = poi_from_val
+
     is_reversed = False if poi_from_type == "begin" else True
     poi_types = tuple(parameters["poi_types"])
-    # stop_values = [1, 2]
 
     geolocator = Nominatim(user_agent = "poi_pathfinder_app")
     start_loc_coords = geolocator.geocode(parameters["start_location"])
@@ -76,10 +76,11 @@ def run_poi_pathfinder_algorithm(parameters):
     end_time = time.time()
     elapsed_time1 = end_time - start_time
 
-    # for stop_value in stop_values:
     start_time2 = time.time()
 
     stop_node_id = find_stop_node(shortest_path, stop_weight, stop_value, graph, is_reversed)
+    if stop_node_id == None:
+        return None, None
 
     # Find the new shortest path
     shortest_path_with_poi, poi_point = find_new_path_with_poi(
@@ -99,16 +100,17 @@ def run_poi_pathfinder_algorithm(parameters):
     elapsed_time2 = end_time2 - start_time2
 
     # Calculate the total travel time by summing the travel times of each edge in the path
-    print(f"Start point : {start_point.y, start_point.x}. End point: {end_point.y, end_point.x}")
-    print('Old path')
-    print(f'Total time {path_length(shortest_path, graph, "travel_time")}')
-    print(f'Total Length {path_length(shortest_path, graph, "length")}')
-    print(f"First path was fined in : {elapsed_time1} seconds")
-    print('New path')
-    print(f'Total time {path_length(shortest_path_with_poi, graph, "travel_time")}')
-    print(f'Total Length {path_length(shortest_path_with_poi, graph, "length")}')     
-    print(f"New Path was fined in: {elapsed_time2} seconds")
-    print(f"Graph was generated: {elapsed_time_graph} seconds")
+    if shortest_path_with_poi != None:
+        print(f"Start point : {start_point.y, start_point.x}. End point: {end_point.y, end_point.x}")
+        print('Old path')
+        print(f'Total time {path_length(shortest_path, graph, "travel_time")}')
+        print(f'Total Length {path_length(shortest_path, graph, "length")}')
+        print(f"First path was fined in : {elapsed_time1} seconds")
+        print('New path')
+        print(f'Total time {path_length(shortest_path_with_poi, graph, "travel_time")}')
+        print(f'Total Length {path_length(shortest_path_with_poi, graph, "length")}')     
+        print(f"New Path was fined in: {elapsed_time2} seconds")
+        print(f"Graph was generated: {elapsed_time_graph} seconds")
 
     # Close the SQLAlchemy engine
     engine.dispose()

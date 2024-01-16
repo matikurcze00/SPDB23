@@ -74,6 +74,8 @@ def path_length(shortest_path, graph, weight):
 
 def find_new_path_with_poi(shortest_path, stop_node_id, engine, graph, start_node, end_node, weight, max_extend, weight_extend, poi_type):
     primary_length = path_length(shortest_path, graph, weight_extend)
+    shortest_path_with_poi = None
+    poi_point = None
     while(stop_node_id>0):
         path_break = Point(shortest_path[stop_node_id])
         

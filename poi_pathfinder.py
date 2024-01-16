@@ -16,6 +16,7 @@ class POIPathfinderGUI:
 
         self.__map_frame = None
         self.__map_widget = None
+
         self.__control_frame = None
         self.__poi_requirements_frame = None
         self.__main_var = tk.BooleanVar(value = True)
@@ -251,11 +252,17 @@ class POIPathfinderGUI:
         else:
             return False
 
+    def __clear_map(self):
+        self.__map_widget.delete_all_path()
+        self.__map_widget.delete_all_marker()
+
     def __run_algorithm(self, parameters):
+        self.__clear_map()
         path, poi_point = run_poi_pathfinder_algorithm(parameters)
 
         if path == None:
-            print("[ERROR] Algorithm failed to create a path.")
+            print("[ERROR] Algorithm failed to create a path, because a given POI type could not be found.")
+            tk.messagebox.showwarning("Error", "Failed to find a given POI type for given parameters.")
             return
 
         # Marking the whole road on the map
