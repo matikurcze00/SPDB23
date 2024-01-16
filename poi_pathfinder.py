@@ -210,7 +210,7 @@ class POIPathfinderGUI:
         message = ""
 
         conditions = [
-            (self.__start_loc.get() in [None, ""], "start location was not defined!"),
+            (self.__start_loc.get() in [None, ""], "Start location was not defined!"),
             (self.__end_loc.get() in [None, ""], "End location was not defined!"),
             (self.__max_time_ext.get() == "", "Max. time extension was not defined!"),
             (not self.__is_float(self.__max_time_ext.get()), "Max. time extension needs to be a number"),

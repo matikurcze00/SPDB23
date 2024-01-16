@@ -94,7 +94,7 @@ def find_new_path_with_poi(shortest_path, stop_node_id, engine, graph, start_nod
                 print(f"extend: {new_length - primary_length}")
                 if new_length - primary_length < max_extend:
                     return shortest_path_with_poi, poi_point
-                else :
+                else:
                     continue
             except nx.NetworkXNoPath:
                 print("POI is outside the graph")

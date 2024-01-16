@@ -18,16 +18,22 @@ def run_poi_pathfinder_algorithm(parameters):
     # Extract parameters
     starting_loc = parameters["start_location"]
     end_loc = parameters["end_location"]
+    max_ext_type = parameters["max_ext_type"]
+    max_time_ext = parameters["max_time_ext"]
+    max_road_ext = parameters["max_road_ext"]
+    poi_requirements_type = parameters["poi_requirements_type"] # "time" or "road"
+    poi_from_type = parameters["poi_from_type"] # "begin" or "end"
+    poi_from_val = parameters["poi_from_val"]
 
-    # DO POPRAWY TODO TODO TODO
-    # max_time_ext = parameters["max_time_ext"]
-    # max_road_ext = parameters["max_road_ext"]
-    # poi_requirements_type = parameters["poi_requirements_type"]
-    # poi_from_begin_road = parameters["poi_from_begin_road"]
-    # poi_from_end_road = parameters["poi_from_end_road"]
-    # poi_from_begin_time = parameters["poi_from_begin_time"]
-    # poi_from_end_time = parameters["poi_from_end_time"]
+    # Set algorithm's parameters
+    weight = "length"
+    weight_extend = "travel_time" if max_ext_type == "time" else "length"
+    max_extend = max_time_ext if weight_extend == "travel_time" else max_road_ext
+    stop_weight = "travel_time" if poi_requirements_type == "time" else "length"
+    stop_value = poi_from_val
+    is_reversed = False if poi_from_type == "begin" else True
     poi_types = tuple(parameters["poi_types"])
+    # stop_values = [1, 2]
 
     geolocator = Nominatim(user_agent = "poi_pathfinder_app")
     start_loc_coords = geolocator.geocode(parameters["start_location"])
@@ -43,25 +49,6 @@ def run_poi_pathfinder_algorithm(parameters):
     else:
         print("[ERROR] Start or end point could not be localized.")
         return None
-
-    #Starting parameters
-    # Warszawa- Łódź
-    # start = Point(20.85950, 52.19354)
-    # end = Point(19.4897, 51.801)
-    # krakow - Gdańsk
-    # start = Point(19.9450, 50.0647)
-    # end = Point(18.6466, 54.3520)
-    # #bialystok - Mrągowo
-    # start = Point(23.1688, 53.1325)
-    # end = Point(21.3049, 53.8642)
-
-    weight = 'length' 
-    stop_weight = 'travel_time'
-    stop_value = 1.3
-    weight_extend = 'travel_time'
-    max_extend = 30
-    is_reversed = False
-    # stop_values = [1, 2]
     
     # Create an SQLAlchemy engine and connect to the database
     engine = create_engine(db_uri)
@@ -110,8 +97,8 @@ def run_poi_pathfinder_algorithm(parameters):
 
     end_time2 = time.time()
     elapsed_time2 = end_time2 - start_time2
-    # Calculate the total travel time by summing the travel times of each edge in the path
 
+    # Calculate the total travel time by summing the travel times of each edge in the path
     print(f"Start point : {start_point.y, start_point.x}. End point: {end_point.y, end_point.x}")
     print('Old path')
     print(f'Total time {path_length(shortest_path, graph, "travel_time")}')
@@ -122,28 +109,6 @@ def run_poi_pathfinder_algorithm(parameters):
     print(f'Total Length {path_length(shortest_path_with_poi, graph, "length")}')     
     print(f"New Path was fined in: {elapsed_time2} seconds")
     print(f"Graph was generated: {elapsed_time_graph} seconds")
-
-    # Folium map
-    # map_center = [(start_point.y + end_point.y) / 2, (start_point.x + end_point.x) / 2]
-    # m = folium.Map(location = map_center, zoom_start = 9)
-
-    # shortest_path_coords = [transformer_to_4326.transform(coord[0], coord[1]) for coord in shortest_path_with_poi]
-
-    # # Add the shortest path as a PolyLine to the map
-    # folium.PolyLine(locations = shortest_path_coords, color = 'blue', weight = 5).add_to(m)
-
-    # # Save the map to an HTML file or display it
-    # # m.save("shortest_path_map_szcz.html")
-    # # m.save("shortest_path_map_szcz_kra.html")
-
-    # shortest_path_coords = [transformer_to_4326.transform(coord[0], coord[1]) for coord in shortest_path]
-
-    # m = folium.Map(location = map_center, zoom_start = 9)
-    # # Add the shortest path as a PolyLine to the map
-    # folium.PolyLine(locations=shortest_path_coords, color='blue', weight=5).add_to(m)
-
-    # # Save the map to an HTML file or display it
-    # m.save("shortest_path_map_szcz_kra_no_poi.html")
 
     # Close the SQLAlchemy engine
     engine.dispose()
