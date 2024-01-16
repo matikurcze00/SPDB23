@@ -74,8 +74,7 @@ def path_length(shortest_path, graph, weight):
 
 def find_new_path_with_poi(shortest_path, stop_node_id, engine, graph, start_node, end_node, weight, max_extend, weight_extend, poi_type):
     primary_length = path_length(shortest_path, graph, weight_extend)
-    shortest_path_with_poi = None
-    poi_point = None
+    visited_points = []
     while(stop_node_id>0):
         path_break = Point(shortest_path[stop_node_id])
         
@@ -86,21 +85,23 @@ def find_new_path_with_poi(shortest_path, stop_node_id, engine, graph, start_nod
         for idx, row in gdf.iterrows():
             geom = row['way']
             poi_point = Point(geom.coords[0])
-            poi_node = nearest_node(poi_point.x, poi_point.y, graph)
-            try:
-                shortest_path_to_poi = nx.shortest_path(graph, source=start_node, target=poi_node, weight=weight)
-                shortest_path_from_poi = nx.shortest_path(graph, source=poi_node, target=end_node, weight=weight)
-                
-                shortest_path_with_poi = shortest_path_to_poi + shortest_path_from_poi[1:len(shortest_path_from_poi)]
-                new_length = path_length(shortest_path_with_poi, graph, weight_extend)
-                print(f"extend: {new_length - primary_length}")
-                if new_length - primary_length < max_extend:
-                    return shortest_path_with_poi, poi_point
-                else:
+            if not any(poi_point.equals(point) for point in visited_points):
+                poi_node = nearest_node(poi_point.x, poi_point.y, graph)
+                try:
+                    shortest_path_to_poi = nx.shortest_path(graph, source=start_node, target=poi_node, weight=weight)
+                    shortest_path_from_poi = nx.shortest_path(graph, source=poi_node, target=end_node, weight=weight)
+                    
+                    shortest_path_with_poi = shortest_path_to_poi + shortest_path_from_poi[1:len(shortest_path_from_poi)]
+                    new_length = path_length(shortest_path_with_poi, graph, weight_extend)
+                    print(f"extend: {new_length - primary_length}")
+                    if new_length - primary_length < max_extend:
+                        return shortest_path_with_poi, poi_point
+                    else :
+                        visited_points.append(poi_point)
+                        continue
+                except nx.NetworkXNoPath:
+                    print("POI is outside the graph")
                     continue
-            except nx.NetworkXNoPath:
-                print("POI is outside the graph")
-                continue
         stop_node_id = stop_node_id - 1
 
     return shortest_path_with_poi, poi_point
