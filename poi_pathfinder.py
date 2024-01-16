@@ -47,6 +47,8 @@ class POIPathfinderGUI:
         self.__map_frame.pack_propagate(False)
         self.__map_widget = tkintermapview.TkinterMapView(self.__map_frame, width = 600, height = 600, corner_radius = 0)
         self.__map_widget.pack(fill = "both", expand = True)
+        self.__map_widget.set_position(52.54682, 19.70638)
+        self.__map_widget.set_zoom(6)
         
     def __init_control_frame(self):
         self.__init_main_edit_fields()
